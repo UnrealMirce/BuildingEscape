@@ -4,43 +4,48 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "Engine/World.h"
-#include "DrawDebugHelpers.h"
-#include "PhysicsEngine/PhysicsHandleComponent.h"
-#include "Components/InputComponent.h"
-#include "Grabber.generated.h"
+#include "Engine/WorldComposition.h"
+#include "GameFramework/Actor.h"
+#include "Containers/Queue.h"
+#include "Spawner.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class BUILDINGESCAPE_API UGrabber : public UActorComponent
+class BUILDINGESCAPE_API USpawner : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UGrabber();
+	USpawner();
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	void SetupInputComponent();
-
-	void GetAttachedPhysicsHandle();
-
-	void Grab();
-
-	void Release();
+	void GetStaticMeshFromOwner();
 
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	const FHitResult GetFirstPhysicsBodyInReach();
+	void SpawnNextActor(FTransform &NextSpawningLocation);
+
+	void ComputeNextSpawnPosition();
 
 private:
-	UPhysicsHandleComponent * PhysicsHandle = nullptr;
-	UInputComponent * InputComponent = nullptr;
-	FVector LineTraceEnd;
+	AActor* SpawnerOrigin;
+	AActor* DesiredActorToSpawn;
+	UStaticMesh *DesiredStaticMesh;
+
+	int32 CurrentXOffset;
+	int32 CurrentYOffset;
+	int32 CurrentZOffset;
+	int32 PassedTicks;
+	
+
+		
 	
 };
