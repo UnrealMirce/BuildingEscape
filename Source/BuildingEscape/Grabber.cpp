@@ -84,21 +84,12 @@ void UGrabber::GetAttachedPhysicsHandle()
 
 const FHitResult UGrabber::GetFirstPhysicsBodyInReach()
 {
-	// Get the player viewpoint
-	FVector PlayerViewPointLocation;
-	FRotator Rotation;
-	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT PlayerViewPointLocation, OUT Rotation); // OUT does nothing, but it allows us to mark out params!
-
-																										   // Draw a debug line for now
-	FVector RotAsVector = Rotation.Vector();
-	float Reach = 100.f;
-	FVector EndLocation = PlayerViewPointLocation + Reach * RotAsVector;
-	LineTraceEnd = EndLocation;
+	GetLineTraceEndpoints();
 
 	DrawDebugLine(
 		GetWorld(),
 		PlayerViewPointLocation,
-		EndLocation,
+		LineTraceEnd,
 		FColor(255, 0, 0),
 		false,
 		0.f,
@@ -114,7 +105,7 @@ const FHitResult UGrabber::GetFirstPhysicsBodyInReach()
 	GetWorld()->LineTraceSingleByObjectType(
 		OUT Hit,
 		PlayerViewPointLocation,
-		EndLocation,
+		LineTraceEnd,
 		FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody), // we only want to look at physics bodies
 		TraceParameters
 	);
@@ -125,4 +116,16 @@ const FHitResult UGrabber::GetFirstPhysicsBodyInReach()
 	}
 
 	return Hit;
+}
+
+void UGrabber::GetLineTraceEndpoints()
+{
+	// Get the player viewpoint
+	FRotator Rotation;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT PlayerViewPointLocation, OUT Rotation); // OUT does nothing, but it allows us to mark out params!
+
+																										   // Draw a debug line for now
+	FVector RotAsVector = Rotation.Vector();
+	float Reach = 100.f;
+	LineTraceEnd = PlayerViewPointLocation + Reach * RotAsVector;
 }

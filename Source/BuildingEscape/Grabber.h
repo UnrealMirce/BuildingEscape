@@ -38,9 +38,12 @@ public:
 
 	const FHitResult GetFirstPhysicsBodyInReach();
 
+	void GetLineTraceEndpoints();
+
 private:
 	UPhysicsHandleComponent * PhysicsHandle = nullptr;
 	UInputComponent * InputComponent = nullptr;
 	FVector LineTraceEnd;
+	FVector PlayerViewPointLocation;
 	
 };
